@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chendusikao.github.io/morrow-fen-demo/sitemap.xml

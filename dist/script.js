@@ -34,3 +34,21 @@ filters.forEach((button) => {
 });
 
 document.querySelector('[data-year]').textContent = new Date().getFullYear();
+
+const todayHours = document.querySelector('[data-today-hours]');
+if (todayHours) {
+  const weekday = new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long',
+    timeZone: 'Europe/London',
+  }).format(new Date());
+  const hoursByDay = {
+    Monday: 'Closed',
+    Tuesday: '5:00–10:30pm',
+    Wednesday: '5:00–10:30pm',
+    Thursday: '5:00–10:30pm',
+    Friday: '12:00–11:00pm',
+    Saturday: '12:00–11:00pm',
+    Sunday: '12:00–8:00pm',
+  };
+  todayHours.textContent = hoursByDay[weekday] || 'See opening hours';
+}

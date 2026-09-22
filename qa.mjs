@@ -40,7 +40,15 @@ for (const viewport of [
       nav: document.querySelectorAll("nav").length,
       footer: document.querySelectorAll("footer").length,
     },
+    canonical: document.querySelector('link[rel="canonical"]')?.href,
+    ogUrl: document.querySelector('meta[property="og:url"]')?.content,
+    todayHours: document.querySelector('[data-today-hours]')?.textContent?.trim(),
   }));
+
+  const publicUrl = "https://chendusikao.github.io/morrow-fen-demo/";
+  if (layout.canonical !== publicUrl) errors.push(`canonical mismatch: ${layout.canonical}`);
+  if (layout.ogUrl !== publicUrl) errors.push(`og:url mismatch: ${layout.ogUrl}`);
+  if (!layout.todayHours || layout.todayHours === "Checking hours…") errors.push("today hours were not resolved");
 
   await page.locator("#menu").scrollIntoViewIfNeeded();
   await page.getByRole("button", { name: "Puddings" }).click();
