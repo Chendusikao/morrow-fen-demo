@@ -22,7 +22,7 @@ a { color: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid #f5c56e; outline-offset: 4px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-.skip-link { position: fixed; z-index: 100; top: -80px; left: 12px; background: white; color: var(--ink); padding: 10px 14px; font-weight: 700; transition: top 120ms ease; }
+.skip-link { position: absolute; z-index: 100; top: -80px; left: 12px; background: white; color: var(--ink); padding: 10px 14px; font-weight: 700; transition: top 120ms ease; }
 .skip-link:focus { top: 12px; }
 
 .demo-strip { background: var(--gold); color: var(--ink-deep); text-align: center; text-transform: uppercase; letter-spacing: 0.13em; font-size: 0.75rem; font-weight: 700; padding: 7px 16px; }

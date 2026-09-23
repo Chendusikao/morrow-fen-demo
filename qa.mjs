@@ -2,6 +2,8 @@ import fs from "node:fs/promises";
 import { chromium } from "playwright";
 
 const outDir = "qa-output";
+const siteUrl = process.env.DEMO_BASE_URL || "http://127.0.0.1:4173/";
+const screenshotPrefix = siteUrl.startsWith("http://127.0.0.1:") ? "" : "public-";
 await fs.mkdir(outDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 
@@ -15,7 +17,17 @@ for (const viewport of [
   const errors = [];
   page.on("console", (message) => { if (message.type() === "error") errors.push(`console: ${message.text()}`); });
   page.on("pageerror", (error) => errors.push(`page: ${error.message}`));
-  const response = await page.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
+  const response = await page.goto(siteUrl, { waitUntil: "networkidle" });
+  const skipLink = page.getByRole("link", { name: "Skip to main content" });
+  const hiddenSkipBox = await skipLink.boundingBox();
+  if (!hiddenSkipBox || hiddenSkipBox.y >= 0) errors.push("skip link is visible before keyboard focus");
+  await page.keyboard.press("Tab");
+  await page.waitForTimeout(150);
+  const focusedSkipBox = await skipLink.boundingBox();
+  if (!(await skipLink.evaluate((element) => document.activeElement === element)) || !focusedSkipBox || focusedSkipBox.y < 0) {
+    errors.push("skip link is not visible on keyboard focus");
+  }
+  await page.keyboard.press("Tab");
   if (viewport.width === 360) {
     await page.getByRole("button", { name: "Open navigation" }).click();
     const expanded = await page.getByRole("button", { name: "Close navigation" }).getAttribute("aria-expanded");
@@ -56,7 +68,7 @@ for (const viewport of [
   const hiddenItems = await page.locator(".menu-item[hidden]").count();
   if (visibleItems !== 3 || hiddenItems !== 6) errors.push(`menu filter mismatch: ${visibleItems} visible, ${hiddenItems} hidden`);
   await page.getByRole("button", { name: "All" }).click();
-  await page.screenshot({ path: `${outDir}/${viewport.name}.png`, fullPage: true });
+  await page.screenshot({ path: `${outDir}/${screenshotPrefix}${viewport.name}.png`, fullPage: true });
 
   results.push({
     viewport: viewport.name,
